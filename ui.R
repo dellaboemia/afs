@@ -10,11 +10,9 @@ shinyUI(pageWithSidebar(
     selectInput("fuel", label = ("Fuel Type:"), choices = fuel_types),
     selectInput("connector", label = ("Connector Type:"), choices = connector_types),
     selectInput("state", label = ("State:"), choices = states),
-    selectInput("city", label = ("City:"), choices = list("citySearch")),
-#    htmlOutput("cityUi"),
+    htmlOutput("cityUi"),
     textInput(inputId = "zip", label = "Zipcode:")
   ),
-#    mainPanel(leafletOutput("m"))
-    mainPanel()
+    mainPanel(leafletOutput("m"))
   )
 )
