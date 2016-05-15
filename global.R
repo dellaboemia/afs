@@ -35,7 +35,7 @@ connector_types <- list("NEMA 5-15 (Level 1)" = "NEMA515",
                         "SAE J1772 Combo (DC fast charging)" = "J1772COMBO",
                         "Tesla (DC fast charging)" = "TESLA")
 # Capture state abbreviations for ui select
-states <- state.abb
+states <- unique(zipcode$state)
 
 # Download alternative fuel station data
 apsUrl <- "https://api.data.gov/nrel/alt-fuel-stations/v1.csv?api_key=zhiWRDbKkuL7G0Iwm2IifkfxfBeqcJ46GaHQnv5E&format=csv"

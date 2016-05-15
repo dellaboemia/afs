@@ -10,16 +10,20 @@ shinyServer(function(input, output, session) {
     selectInput("city", label = "City",choices = subset(zipcode, state == input$state)$city)
   })
 
-  stations <- function(){
-    location <- subset(zipcode, city==input$city & state==input$state)
-    afs  <- subset(afs, City %in% location$city & State %in% location$state)
-    cbind(afs$Longitude, afs$Latitude)
-    }
-    
+  getLong <- eventReactive(input$refresh, {
+    x <- subset(zipcode, city==input$city & state==input$state)
+    x[1,]$longitude
+  }, ignoreNULL = FALSE)
+
+  getLat <- eventReactive(input$refresh, {
+    x <- subset(zipcode, city==input$city & state==input$state)
+    x[1,]$latitude
+  }, ignoreNULL = FALSE)
   
   output$m <- renderLeaflet({
     leaflet()  %>%
     addTiles() %>%
-    addCircles(data = stations())
+    setView(lng = getLong(), lat = getLat(), zoom = 10) %>%
+    addCircles(data = afs, lat = ~ Latitude, lng = ~ Longitude, popup = ~Station.Name)
   })
 })

@@ -11,7 +11,8 @@ shinyUI(pageWithSidebar(
     selectInput("connector", label = ("Connector Type:"), choices = connector_types),
     selectInput("state", label = ("State:"), choices = states),
     htmlOutput("cityUi"),
-    textInput(inputId = "zip", label = "Zipcode:")
+    textInput(inputId = "zip", label = "Zipcode:"),
+    actionButton("refresh", "Render Map")
   ),
     mainPanel(leafletOutput("m"))
   )
