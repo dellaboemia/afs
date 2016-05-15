@@ -7,9 +7,9 @@
 shinyUI(pageWithSidebar(
   headerPanel("Alternative Fuel Stations"),
   sidebarPanel(
-    selectInput("fuel", label = ("Fuel Type:"), choices = fuel_types),
-    selectInput("connector", label = ("Connector Type:"), choices = connector_types),
-    selectInput("state", label = ("State:"), choices = states),
+    selectInput("fuel", "Fuel Type:", fuel_types, multiple = TRUE, selectize = FALSE),
+    selectInput("connector", "Connector Type:", connector_types, multiple = TRUE, selectize = FALSE),
+    selectInput("state", label = ("State:"), state.name),
     htmlOutput("cityUi"),
     textInput(inputId = "zip", label = "Zipcode:"),
     actionButton("refresh", "Render Map")
