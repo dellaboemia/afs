@@ -26,6 +26,8 @@ fuel_types <- list("Biodiesel (B20 and above)" = "BD",
                    "Liquefied Natural Gas" = "LNG",
                    "Liquefied Petroleum Gas (Propane)" = "LPG")
 
+ftc <- data.frame(color = topo.colors(7, alpha = NULL), stringsAsFactors = FALSE)
+
 # Connector types
 connector_types <- list("NEMA 5-15 (Level 1)" = "NEMA515",
                         "NEMA 5-20 (Level 1)" = "NEMA520",
@@ -42,8 +44,8 @@ apsUrl <- "https://api.data.gov/nrel/alt-fuel-stations/v1.csv?api_key=zhiWRDbKku
 
 # Download alternative fuel data for current day.
 today <- Sys.Date()
-cDate <- as.Date(file.info("./data/afs.csv")$ctime)
-if ((!file.exists("./data/afs.csv")) | (cDate != today)){
+mDate <- as.Date(file.info("./data/afs.csv")$mtime)
+if ((!file.exists("./data/afs.csv")) | (mDate != today)){
   download.file(apsUrl, destfile = "./data/afs.csv", method = "libcurl")
 }
 

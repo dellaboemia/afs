@@ -20,10 +20,15 @@ shinyServer(function(input, output, session) {
     x[1,]$latitude
   }, ignoreNULL = FALSE)
   
+  getColors <- eventReactive(input$refresh, {
+    colorFactor(topo.colors(7,alpha = NULL), input$fuel)
+  }, ignoreNULL = FALSE)
+  
   output$m <- renderLeaflet({
     leaflet()  %>%
     addTiles() %>%
     setView(lng = getLong(), lat = getLat(), zoom = 10) %>%
-    addCircles(data = afs, lat = ~ Latitude, lng = ~ Longitude, popup = ~Station.Name)
+    addCircleMarkers(data = afs, lat = ~ Latitude, lng = ~ Longitude, popup = ~Station.Name, color = ftc$color) %>%
+    addLegend(position = "bottomright", labels = fuel_types, colors = ftc$color)
   })
 })
