@@ -17,29 +17,18 @@ library(zipcode)
 # Zipcode, state, city data
 data("zipcode")
 
+# Standardize Column names for zipcode file
+colnames(zipcode) <- c("Zip", "City", "State", "Latitude", "Longitude")
+
+# Create States data set with abbreviation and name
+states <- data.frame(state.abb, state.name)
+colnames(states) <- c("State", "State.Name")
+
+# Merge zipcode and states data frame
+zipcode <- merge(zipcode, states)
+
 # Sort zipcode by state and city
-zipcode <- arrange(zipcode, state, city)
-
-# Initiate fuel types for Pulldown
-fuel_types <- list("Biodiesel (B20 and above)" = "BD",
-                   "Compressed Natural Gas" = "CNG",
-                   "Ethanol (E85)" = "E85",
-                   "Electric" = "ELEC",
-                   "Hydrogen" = "HY",
-                   "Liquefied Natural Gas" = "LNG",
-                   "Liquefied Petroleum Gas (Propane)" = "LPG")
-
-ftc <- data.frame(color = topo.colors(7, alpha = NULL), stringsAsFactors = FALSE)
-
-# Connector types
-connector_types <- list("NEMA 5-15 (Level 1)" = "NEMA515",
-                        "NEMA 5-20 (Level 1)" = "NEMA520",
-                        "NEMA 14-50 (Level 1)" = "NEMA1450",
-                        "J1772 (Level 2)" = "J1772",
-                        "CHAdeMO (DC fast charging)" = "CHADEMO",
-                        "SAE J1772 Combo (DC fast charging)" = "J1772COMBO",
-                        "Tesla (DC fast charging)" = "TESLA")
-
+zipcode <- arrange(zipcode, State, City)
 
 # Download alternative fuel station data
 apsUrl <- "https://api.data.gov/nrel/alt-fuel-stations/v1.csv?api_key=zhiWRDbKkuL7G0Iwm2IifkfxfBeqcJ46GaHQnv5E&format=csv"
@@ -53,3 +42,12 @@ if ((!file.exists("./data/afs.csv")) | (mDate != today)){
 
 # Read alternative fuel station data
 afs <- read.csv("./data/afs.csv", na.strings = "")
+
+# Add state name to AFS
+afs <- merge(afs, states)
+
+# Variables to display in data table
+vars <- c("Fuel.Type.Code", "Station.Name", "Street.Address","City","State","ZIP","Station.Phone" ,"EV.Connector.Types")
+
+# Initiate fuel types for Pulldown
+fuel_types <- c("BD","CNG","E85","ELEC","HY","LNG","LPG")

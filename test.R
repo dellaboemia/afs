@@ -4,5 +4,9 @@
 #John James
 #May 13, 2016
 
-data(state)
-print(head(state.name))
+f <- "E85"
+t <- "J1772"
+s <- "CA"
+c <- "San Francisco"
+z <- ""
+

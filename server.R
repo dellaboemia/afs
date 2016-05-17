@@ -6,29 +6,47 @@
 
 shinyServer(function(input, output, session) {
 
+  # Render list of states
+  output$stateUi <- renderUI({
+    selectInput("state", label = ("State:"), c(Choose='', state.name), selectize = FALSE)
+  })
+  
   # Render list of cities for state selected
   output$cityUi <- renderUI({
-    state.code <<- subset(states, name == input$state)
-    selectInput("city", label = "City",choices = subset(zipcode, state == state.code$abb)$city)
+    selectInput("city", label = "City",choices = c(Choose='',unique(subset(zipcode, State.Name == input$state)$City)), 
+                selectize = FALSE)
   })
 
-  # Get longitude for state and city selected
-  getLong <- eventReactive(input$refresh, {
-    x <- subset(zipcode, city==input$city & state==state.code$abb)
-    x[1,]$longitude
-  }, ignoreNULL = FALSE)
-
-  # Get latitude for state and city selected
-  getLat <- eventReactive(input$refresh, {
-    x <- subset(zipcode, city==input$city & state==state.code$abb)
-    x[1,]$latitude
-  }, ignoreNULL = FALSE)
+    # Render zip code field
+  output$zipUi <- renderUI({
+    textInput(inputId = "zip", label = "Zipcode:")
+  })
   
+
+  # Get longitude and latitude for state and city selected
+  getCenter <- eventReactive(input$refresh, {
+    if (nrow(subset(zipcode, Zip == input$zip)) > 0) {
+      subset(zipcode, Zip == input$zip)
+    } else {
+    subset(zipcode, City==input$city & State.Name==input$state)[1,]
+  }}, ignoreNULL = FALSE)
+
   output$m <- renderLeaflet({
+    cols <- rainbow(length(levels(afs$Fuel.Type.Code)), alpha = NULL)
+    afs$colors <- cols[unclass(afs$Fuel.Type.Code)]
     leaflet()  %>%
     addTiles() %>%
-    setView(lng = getLong(), lat = getLat(), zoom = 10) %>%
-    addCircleMarkers(data = afs, lat = ~ Latitude, lng = ~ Longitude, popup = ~Station.Name, color = ftc$color) %>%
-    addLegend(position = "bottomright", labels = fuel_types, colors = ftc$color)
+    setView(lng = getCenter()$Longitude, lat = getCenter()$Latitude, zoom = 12) %>%
+    addCircleMarkers(data = afs, lat = ~ Latitude, lng = ~ Longitude, popup = ~Station.Name, color = ~colors) %>%
+    addLegend(position = "bottomright", labels = fuel_types, colors = cols)
   })
+
+  output$table <- renderTable({
+    if (nrow(subset(afs, ZIP == input$zip)) !=0) {
+      x <- subset(afs, ZIP == input$zip)
+    } else {
+      x <- subset(afs, City == input$city & State.Name == input$state)
+    }
+    x[vars]
+    })
 })

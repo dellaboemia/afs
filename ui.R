@@ -7,13 +7,16 @@
 shinyUI(pageWithSidebar(
   headerPanel("Alternative Fuel Stations"),
   sidebarPanel(
-    selectInput("fuel", "Fuel Type:", fuel_types, multiple = TRUE, selectize = FALSE),
-    selectInput("connector", "Connector Type:", connector_types, multiple = TRUE, selectize = FALSE),
-    selectInput("state", label = ("State:"), state.name),
+    htmlOutput("stateUi"),
     htmlOutput("cityUi"),
-    textInput(inputId = "zip", label = "Zipcode:"),
+    htmlOutput("zipUi"),
     actionButton("refresh", "Render Map")
   ),
-    mainPanel(leafletOutput("m"))
+    mainPanel(
+      tabsetPanel(type = "tabs",
+        tabPanel("Interactive Map", leafletOutput("m")),
+        tabPanel("Data Explorer", tableOutput("table"))
+      )
+    )
   )
 )
